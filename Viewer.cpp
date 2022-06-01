@@ -49,6 +49,17 @@ void Viewer::paintEvent(QPaintEvent*) {
 		previous_y = y;
 	}
 }
+void Viewer::wheelEvent(QWheelEvent* event) {
+	QPoint delta = event->angleDelta() / 8;
+	if (delta.y() > 0) {
+		range = range / 3;
+		update();
+	}
+	else {
+		range = range * 3;
+		update();
+	}
+}
 void Viewer::drawCoordinate(QPainter& painter) {
 	double test = center_x;
 	QPen pen;
