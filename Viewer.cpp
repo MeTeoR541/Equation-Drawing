@@ -2,11 +2,11 @@
 Viewer::Viewer(QWidget* parent) :QWidget(parent){
 	this->setMinimumWidth(1000);
 	this->setMinimumHeight(800);
-	center_x = 4;
-	center_y = 4;
+	center_x = 0;
+	center_y = 0;
 	axis_x = 0;
 	axis_y = 0;
-	range = 2.2;
+	range = 1;
 	axis_hasX = true;
 	axis_hasY = true;
 }
@@ -19,6 +19,10 @@ void Viewer::paintEvent(QPaintEvent*) {
 	pen.setColor(QColor(Qt::black));
 	painter.setPen(pen);
 	painter.drawRect(10, 10, 600, 600);
+	
+	//test
+	painter.drawText(700, 10, QString::number(center_x, 10, 4));
+	painter.drawText(700, 20, QString::number(center_y, 10, 4));
 
 	drawCoordinate(painter);
 	//x,y axis
@@ -51,13 +55,21 @@ void Viewer::paintEvent(QPaintEvent*) {
 }
 void Viewer::wheelEvent(QWheelEvent* event) {
 	QPoint delta = event->angleDelta() / 8;
+	QPointF temp = event->position();
 	if (delta.y() > 0) {
-		range = range / 3;
+		changeCenter(temp.x(), temp.y(), range / 2);
 		update();
 	}
 	else {
-		range = range * 3;
+		changeCenter(temp.x(), temp.y(), range * 2);
 		update();
+	}
+}
+void Viewer::changeCenter(double now_x, double now_y, double newrange) {
+	if (now_x > 10 && now_x < 610 && now_y>10 && now_y < 610) {
+		center_x = ((now_x - 310) / 50 * range + center_x) - ((now_x - 310) / 50 * newrange);
+		center_y = ((310 - now_y) / 50 * range + center_y) - ((310 - now_y) / 50 * newrange);
+		range = newrange;
 	}
 }
 void Viewer::drawCoordinate(QPainter& painter) {

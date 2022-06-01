@@ -9,6 +9,7 @@
 #include <QPainter>
 #include <QPoint>
 #include <QMouseEvent>
+#include <QWheelEvent>
 #include <QFileDialog>
 #include <cmath>
 using namespace std;
@@ -29,6 +30,8 @@ private:
 public:
 	Viewer(QWidget* parent = 0);
 	void paintEvent(QPaintEvent*);
+	void wheelEvent(QWheelEvent* event);
 	void drawCoordinate(QPainter& painter);
 	void drawAxis(QPainter& painter);
+	void changeCenter(double now_x, double now_y, double newrange);
 };
