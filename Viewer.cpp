@@ -2,8 +2,8 @@
 Viewer::Viewer(QWidget* parent) :QWidget(parent){
 	this->setMinimumWidth(1000);
 	this->setMinimumHeight(800);
-	center_x = -2;
-	center_y = 2;
+	center_x = 4;
+	center_y = 4;
 	axis_x = 0;
 	axis_y = 0;
 	range = 2.2;
@@ -124,28 +124,28 @@ void Viewer::drawCoordinate(QPainter& painter) {
 			test = test - range;
 		}
 		for (int i = 0; i < 7; i++) {
-			if ((310 - (test / range) * 50) - 50 * i > 10) {
+			if ((310 + (test / range) * 50) - 50 * i > 10) {
 				if (center_y - test + (double)i * range == 0) {
 					pen.setColor(QColor(Qt::black));
 					painter.setPen(pen);
-					axis_x = 310 - (test / range) * 50 - 50 * i;
+					axis_x = 310 + (test / range) * 50 - 50 * i;
 					axis_hasX = true;
 				}
-				painter.drawLine(10, 310 - (test / range) * 50 - 50 * i, 610, 310 - (test / range) * 50 - 50 * i);
+				painter.drawLine(10, 310 + (test / range) * 50 - 50 * i, 610, 310 + (test / range) * 50 - 50 * i);
 				pen.setColor(QColor(0, 0, 0, 100));
 				painter.setPen(pen);
 			}
-			if ((310 - (test / range) * 50) + 50 * (i + 1) < 610) {
+			if ((310 + (test / range) * 50) + 50 * (i + 1) < 610) {
 				if (center_y - test - (double)(i + 1) * range == 0) {
 					pen.setColor(QColor(Qt::black));
 					painter.setPen(pen);
-					axis_x = 310 - (test / range) * 50 + 50 * (i + 1);
+					axis_x = 310 + (test / range) * 50 + 50 * (i + 1);
 					axis_hasX = true;
 				}
-				painter.drawLine(10, 310 - (test / range) * 50 + 50 * (i + 1), 610, 310 - (test / range) * 50 + 50 * (i + 1));
+				painter.drawLine(10, 310 + (test / range) * 50 + 50 * (i + 1), 610, 310 + (test / range) * 50 + 50 * (i + 1));
 				pen.setColor(QColor(0, 0, 0, 100));
 				painter.setPen(pen);
-				axis_headY = 310 - (test / range) * 50 + 50 * (i + 1);
+				axis_headY = 310 + (test / range) * 50 + 50 * (i + 1);
 				range_headY = center_y - test - (double)(i + 1) * range;
 			}
 		}
@@ -155,28 +155,28 @@ void Viewer::drawCoordinate(QPainter& painter) {
 			test = test + range;
 		}
 		for (int i = 0; i < 7; i++) {
-			if ((310 - (test / range) * 50) - 50 * i > 10) {
+			if ((310 + (test / range) * 50) - 50 * i > 10) {
 				if (center_y - test + (double)i * range == 0) {
 					pen.setColor(QColor(Qt::black));
 					painter.setPen(pen);
-					axis_x = 310 - (test / range) * 50 - 50 * i;
+					axis_x = 310 + (test / range) * 50 - 50 * i;
 					axis_hasX = true;
 				}
-				painter.drawLine(10, 310 - (test / range) * 50 - 50 * i, 610, 310 - (test / range) * 50 - 50 * i);
+				painter.drawLine(10, 310 + (test / range) * 50 - 50 * i, 610, 310 + (test / range) * 50 - 50 * i);
 				pen.setColor(QColor(0, 0, 0, 100));
 				painter.setPen(pen);
 			}
-			if ((310 - (test / range) * 50) + 50 * (i + 1) < 610) {
+			if ((310 + (test / range) * 50) + 50 * (i + 1) < 610) {
 				if (center_y - test - (double)(i + 1) * range == 0) {
 					pen.setColor(QColor(Qt::black));
 					painter.setPen(pen);
-					double axis_x = 310 - (test / range) * 50 + 50 * (i + 1);
+					double axis_x = 310 + (test / range) * 50 + 50 * (i + 1);
 					axis_hasX = true;
 				}
-				painter.drawLine(10, 310 - (test / range) * 50 + 50 * (i + 1), 610, 310 - (test / range) * 50 + 50 * (i + 1));
+				painter.drawLine(10, 310 + (test / range) * 50 + 50 * (i + 1), 610, 310 + (test / range) * 50 + 50 * (i + 1));
 				pen.setColor(QColor(0, 0, 0, 100));
 				painter.setPen(pen);
-				axis_headY = 310 - (test / range) * 50 + 50 * (i + 1);
+				axis_headY = 310 + (test / range) * 50 + 50 * (i + 1);
 				range_headY = center_y - test - (double)(i + 1) * range;
 			}
 		}
