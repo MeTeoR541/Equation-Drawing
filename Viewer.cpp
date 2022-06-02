@@ -21,37 +21,11 @@ void Viewer::paintEvent(QPaintEvent*) {
 	painter.drawRect(10, 10, 600, 600);
 	
 	//test
-	painter.drawText(700, 10, QString::number(center_x, 10, 4));
-	painter.drawText(700, 20, QString::number(center_y, 10, 4));
+	painter.drawText(700, 10, QString::number(mouse_x, 10, 4));
+	painter.drawText(700, 20, QString::number(mouse_y, 10, 4));
 
 	drawCoordinate(painter);
-	//x,y axis
-	/*
-	pen.setColor(QColor(Qt::black));
-	painter.setPen(pen);
-	
-	painter.drawLine(310, 10, 310, 610);
-	painter.drawLine(10, 310, 610, 310);
-	*/
-	pen.setColor(QColor(0, 255, 0));
-	painter.setPen(pen);
-	painter.drawRect(305, 305, 10, 10);
-	double previous_x, previous_y;
-	bool first = true;
-	for (int i = 0; i < 600; i++) {
-		double x, y;
-		y = 2 * ((double)i / (50 / range) + center_x - 300 / (50 / range))+4;
-		if (!first && ((center_y - y) * (50 / range) + 310) < 610 && ((center_y - y) * (50 / range) + 310) > 10)
-			painter.drawLine(i + 10, (center_y - y) * (50 / range) + 310, previous_x + 10, (center_y - previous_y) * (50 / range) + 310);
-		first = false;
-		if (i == 200) {
-			int test;
-			test = 0;
-		}
-			
-		previous_x = i;
-		previous_y = y;
-	}
+	drawFunction(painter);
 }
 void Viewer::wheelEvent(QWheelEvent* event) {
 	QPoint delta = event->angleDelta() / 8;
@@ -71,6 +45,17 @@ void Viewer::changeCenter(double now_x, double now_y, double newrange) {
 		center_y = ((310 - now_y) / 50 * range + center_y) - ((310 - now_y) / 50 * newrange);
 		range = newrange;
 	}
+}
+void Viewer::mouseMoveEvent(QMouseEvent* event) {
+	center_x = center_x - (event->x() - mouse_x) / 50 * range;
+	center_y = center_y - (mouse_y - event->y()) / 50 * range;
+	mouse_x = event->x();
+	mouse_y = event->y();
+	update();
+}
+void Viewer::mousePressEvent(QMouseEvent* event) {
+	mouse_x = event->x();
+	mouse_y = event->y();
 }
 void Viewer::drawCoordinate(QPainter& painter) {
 	double test = center_x;
@@ -209,14 +194,36 @@ void Viewer::drawCoordinate(QPainter& painter) {
 void Viewer::drawAxis(QPainter& painter) {
 	if (axis_hasX) {
 		for (int i = 0; i < 12; i++) {
-			if (axis_headX + i * 50 > 0 && axis_headX + i * 50 < 610)
+			if (axis_headX + i * 50 > 10 && axis_headX + i * 50 < 610)
 				painter.drawText(axis_headX + i * 50, axis_x, QString::number(range_headX + i * range, 10, 4));
 		}
 	}
 	if (axis_hasY) {
 		for (int i = 0; i < 12; i++) {
-			if (axis_headY - i * 50 > 0 && axis_headY - i * 50 < 610)
+			if (axis_headY - i * 50 > 10 && axis_headY - i * 50 < 610)
 				painter.drawText(axis_y, axis_headY - i * 50, QString::number(range_headY + i * range, 10, 4));
 		}
+	}
+}
+void Viewer::drawFunction(QPainter& painter) {
+	QPen pen;
+	pen.setColor(QColor(0, 255, 0));
+	painter.setPen(pen);
+	painter.drawRect(305, 305, 10, 10);
+	double previous_x, previous_y;
+	bool first = true;
+	for (int i = 0; i < 600; i++) {
+		double x, y;
+		y = 2 * ((double)i / (50 / range) + center_x - 300 / (50 / range)) + 4;
+		if (!first && ((center_y - y) * (50 / range) + 310) < 610 && ((center_y - y) * (50 / range) + 310) > 10)
+			painter.drawLine(i + 10, (center_y - y) * (50 / range) + 310, previous_x + 10, (center_y - previous_y) * (50 / range) + 310);
+		first = false;
+		if (i == 200) {
+			int test;
+			test = 0;
+		}
+
+		previous_x = i;
+		previous_y = y;
 	}
 }

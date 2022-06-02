@@ -27,11 +27,18 @@ private:
 	double axis_headY;
 	bool axis_hasX;
 	bool axis_hasY;
+
+	double mouse_x;
+	double mouse_y;
 public:
 	Viewer(QWidget* parent = 0);
 	void paintEvent(QPaintEvent*);
 	void wheelEvent(QWheelEvent* event);
+	void mouseMoveEvent(QMouseEvent* event);
+	void mousePressEvent(QMouseEvent* event);
+
 	void drawCoordinate(QPainter& painter);
 	void drawAxis(QPainter& painter);
 	void changeCenter(double now_x, double now_y, double newrange);
+	void drawFunction(QPainter& painter);
 };
