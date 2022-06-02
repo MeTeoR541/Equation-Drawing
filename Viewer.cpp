@@ -2,6 +2,8 @@
 Viewer::Viewer(QWidget* parent) :QWidget(parent){
 	this->setMinimumWidth(1000);
 	this->setMinimumHeight(800);
+	this->setMaximumWidth(1000);
+	this->setMaximumHeight(800);
 	center_x = 0;
 	center_y = 0;
 	axis_x = 0;
@@ -9,6 +11,14 @@ Viewer::Viewer(QWidget* parent) :QWidget(parent){
 	range = 1;
 	axis_hasX = true;
 	axis_hasY = true;
+	now_function_amount = 0;
+	now_drawText = false;
+}
+void Viewer::drawInputText() {
+	QLineEdit* temp = new QLineEdit(this);
+	temp->setGeometry(700, 10, 150, 25);
+	temp->show();
+	text.push_back(temp);
 }
 void Viewer::paintEvent(QPaintEvent*) {
 	QPainter painter(this);
@@ -20,10 +30,14 @@ void Viewer::paintEvent(QPaintEvent*) {
 	painter.setPen(pen);
 	painter.drawRect(10, 10, 600, 600);
 	
+	if (!now_drawText) {
+		drawInputText();
+		now_drawText = true;
+	}
+		
 	//test
-	painter.drawText(700, 10, QString::number(mouse_x, 10, 4));
-	painter.drawText(700, 20, QString::number(mouse_y, 10, 4));
-
+	//painter.drawText(700, 10, QString::number(mouse_x, 10, 4));
+	//painter.drawText(700, 20, QString::number(mouse_y, 10, 4));
 	drawCoordinate(painter);
 	drawFunction(painter);
 }
@@ -209,12 +223,12 @@ void Viewer::drawFunction(QPainter& painter) {
 	QPen pen;
 	pen.setColor(QColor(0, 255, 0));
 	painter.setPen(pen);
-	painter.drawRect(305, 305, 10, 10);
+	//painter.drawRect(305, 305, 10, 10);
 	double previous_x, previous_y;
 	bool first = true;
 	for (int i = 0; i < 600; i++) {
 		double x, y;
-		y = 2 * ((double)i / (50 / range) + center_x - 300 / (50 / range)) + 4;
+		y = sin((double)i / (50 / range) + center_x - 300 / (50 / range));
 		if (!first && ((center_y - y) * (50 / range) + 310) < 610 && ((center_y - y) * (50 / range) + 310) > 10)
 			painter.drawLine(i + 10, (center_y - y) * (50 / range) + 310, previous_x + 10, (center_y - previous_y) * (50 / range) + 310);
 		first = false;

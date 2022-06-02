@@ -6,6 +6,7 @@
 #include <vector>
 #include <QWidget>
 #include <QApplication>
+#include <QLineEdit>
 #include <QPainter>
 #include <QPoint>
 #include <QMouseEvent>
@@ -16,6 +17,9 @@ using namespace std;
 class Viewer :public QWidget {
 	Q_OBJECT
 private:
+	vector<QLineEdit*>text;
+	int now_function_amount;
+	bool now_drawText;
 	double center_x;
 	double center_y;
 	double range;
@@ -37,6 +41,7 @@ public:
 	void mouseMoveEvent(QMouseEvent* event);
 	void mousePressEvent(QMouseEvent* event);
 
+	void drawInputText();
 	void drawCoordinate(QPainter& painter);
 	void drawAxis(QPainter& painter);
 	void changeCenter(double now_x, double now_y, double newrange);
