@@ -7,6 +7,7 @@
 #include <QWidget>
 #include <QApplication>
 #include <QLineEdit>
+#include <QPushButton>
 #include <QPainter>
 #include <QPoint>
 #include <QMouseEvent>

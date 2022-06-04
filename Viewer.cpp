@@ -4,6 +4,10 @@ Viewer::Viewer(QWidget* parent) :QWidget(parent){
 	this->setMinimumHeight(800);
 	this->setMaximumWidth(1000);
 	this->setMaximumHeight(800);
+	QLineEdit* temp = new QLineEdit(this);
+	temp->setGeometry(700, 10, 175, 35);
+	temp->show();
+	text.push_back(temp);
 	center_x = 0;
 	center_y = 0;
 	axis_x = 0;
@@ -15,10 +19,19 @@ Viewer::Viewer(QWidget* parent) :QWidget(parent){
 	now_drawText = false;
 }
 void Viewer::drawInputText() {
-	QLineEdit* temp = new QLineEdit(this);
-	temp->setGeometry(700, 10, 150, 25);
-	temp->show();
-	text.push_back(temp);
+	for (int i = 0; i < text.size(); i++) {
+		text[i]->show();
+	}
+	QPushButton* test = new QPushButton(this);
+	test->show();
+	test->setGeometry(700, (now_function_amount + 1) * 35 + 10, 175, 35);
+	connect(test, &QPushButton::clicked, [&] {
+		QLineEdit* temp = new QLineEdit(this);
+		temp->setGeometry(700, (now_function_amount + 1) * 35 + 10, 175, 35);
+		text.push_back(temp);
+		now_function_amount++;
+		now_drawText = false;
+		});
 }
 void Viewer::paintEvent(QPaintEvent*) {
 	QPainter painter(this);
