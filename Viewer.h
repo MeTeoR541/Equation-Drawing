@@ -19,6 +19,8 @@ class Viewer :public QWidget {
 	Q_OBJECT
 private:
 	vector<QLineEdit*>text;
+	vector<int>function_color;
+	vector<int>function_color_sec;
 	int now_function_amount;
 	bool now_drawText;
 	double center_x;

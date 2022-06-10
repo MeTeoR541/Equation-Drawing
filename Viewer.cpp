@@ -4,10 +4,17 @@ Viewer::Viewer(QWidget* parent) :QWidget(parent){
 	this->setMinimumHeight(800);
 	this->setMaximumWidth(1000);
 	this->setMaximumHeight(800);
+
 	QLineEdit* temp = new QLineEdit(this);
-	temp->setGeometry(700, 10, 175, 35);
+	temp->setGeometry(700, 45, 175, 35);
 	temp->show();
 	text.push_back(temp);
+
+	int color = rand() % 256;
+	function_color.push_back(color);
+	color = rand() % 256;
+	function_color_sec.push_back(color);
+
 	center_x = 0;
 	center_y = 0;
 	axis_x = 0;
@@ -15,22 +22,28 @@ Viewer::Viewer(QWidget* parent) :QWidget(parent){
 	range = 1;
 	axis_hasX = true;
 	axis_hasY = true;
-	now_function_amount = 0;
+	now_function_amount = 1;
 	now_drawText = false;
 }
 void Viewer::drawInputText() {
-	for (int i = 0; i < text.size(); i++) {
+	for (int i = 0; i < now_function_amount; i++) {
+		text[i]->setGeometry(700, i * 35 + 45, 175, 35);
 		text[i]->show();
 	}
 	QPushButton* test = new QPushButton(this);
 	test->show();
-	test->setGeometry(700, (now_function_amount + 1) * 35 + 10, 175, 35);
+	test->setGeometry(700, 10, 175, 35);
 	connect(test, &QPushButton::clicked, [&] {
 		QLineEdit* temp = new QLineEdit(this);
-		temp->setGeometry(700, (now_function_amount + 1) * 35 + 10, 175, 35);
+		temp->setGeometry(700, now_function_amount * 35 + 10, 175, 35);
 		text.push_back(temp);
+		int color = rand() % 256;
+		function_color.push_back(color);
+		color = rand() % 256;
+		function_color_sec.push_back(color);
 		now_function_amount++;
 		now_drawText = false;
+		update();
 		});
 }
 void Viewer::paintEvent(QPaintEvent*) {
@@ -83,6 +96,17 @@ void Viewer::mouseMoveEvent(QMouseEvent* event) {
 void Viewer::mousePressEvent(QMouseEvent* event) {
 	mouse_x = event->x();
 	mouse_y = event->y();
+	if (event->x() >= 875 && event->x() <= 945) {
+		int del = (event->y() - 45) / 35;
+		if (del < text.size() && del >= 0) {
+			text.erase(text.begin() + del, text.begin() + del + 1);
+			function_color.erase(function_color.begin() + del, function_color.begin() + del + 1);
+			function_color_sec.erase(function_color_sec.begin() + del, function_color_sec.begin() + del + 1);
+			now_drawText = false;
+			now_function_amount--;
+			update();
+		}
+	}
 }
 void Viewer::drawCoordinate(QPainter& painter) {
 	double test = center_x;
@@ -237,6 +261,19 @@ void Viewer::drawFunction(QPainter& painter) {
 	pen.setColor(QColor(0, 255, 0));
 	painter.setPen(pen);
 	//painter.drawRect(305, 305, 10, 10);
+	for (int i = 0; i < now_function_amount; i++) {
+		QString temp;
+		temp = text[i]->text();
+		string test;
+		test = temp.toStdString();
+
+		QBrush brush(QColor(255, function_color[i], function_color_sec[i]));
+		pen.setColor(QColor(255, function_color[i], function_color_sec[i]));
+		painter.setPen(pen);
+		painter.setBrush(brush);
+		painter.drawRect(665, 45 + i * 35, 35, 35);
+	}
+
 	double previous_x, previous_y;
 	bool first = true;
 	for (int i = 0; i < 600; i++) {
