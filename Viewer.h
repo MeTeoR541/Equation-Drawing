@@ -14,6 +14,7 @@
 #include <QWheelEvent>
 #include <QFileDialog>
 #include <cmath>
+//#include "functions.h"
 using namespace std;
 class Viewer :public QWidget {
 	Q_OBJECT

@@ -7,7 +7,6 @@ Viewer::Viewer(QWidget* parent) :QWidget(parent){
 
 	QLineEdit* temp = new QLineEdit(this);
 	temp->setGeometry(700, 45, 175, 35);
-	temp->show();
 	text.push_back(temp);
 
 	int color = rand() % 256;
@@ -55,15 +54,13 @@ void Viewer::paintEvent(QPaintEvent*) {
 	pen.setColor(QColor(Qt::black));
 	painter.setPen(pen);
 	painter.drawRect(10, 10, 600, 600);
-	
+	painter.drawRect(665, 10, 325, 780);
+
 	if (!now_drawText) {
 		drawInputText();
 		now_drawText = true;
 	}
 		
-	//test
-	//painter.drawText(700, 10, QString::number(mouse_x, 10, 4));
-	//painter.drawText(700, 20, QString::number(mouse_y, 10, 4));
 	drawCoordinate(painter);
 	drawFunction(painter);
 }
@@ -99,6 +96,7 @@ void Viewer::mousePressEvent(QMouseEvent* event) {
 	if (event->x() >= 875 && event->x() <= 945) {
 		int del = (event->y() - 45) / 35;
 		if (del < text.size() && del >= 0) {
+			text[del]->close();
 			text.erase(text.begin() + del, text.begin() + del + 1);
 			function_color.erase(function_color.begin() + del, function_color.begin() + del + 1);
 			function_color_sec.erase(function_color_sec.begin() + del, function_color_sec.begin() + del + 1);
