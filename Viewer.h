@@ -48,6 +48,7 @@ private:
 
 	Function fun;
 	QPixmap display;
+	QPixmap hide;
 	QPixmap cancel;
 public:
 	Viewer(QWidget* parent = 0);

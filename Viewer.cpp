@@ -26,6 +26,7 @@ Viewer::Viewer(QWidget* parent) :QWidget(parent){
 	now_drawText = false;
 
 	display.load("Button1.png");
+	hide.load("Button1-2.png");
 	cancel.load("Button2.png");
 }
 void Viewer::drawInputText() {
@@ -127,7 +128,7 @@ void Viewer::mousePressEvent(QMouseEvent* event) {
 	else if (event->x() >= 875 && event->x() <= 910) {
 		int hide = (event->y() - 45) / 35;
 		if (hide < text.size() && hide >= 0) {
-			function_hide[hide] = true;
+			function_hide[hide] = !function_hide[hide];
 			update();
 		}
 	}
@@ -336,7 +337,7 @@ void Viewer::drawFunction(QPainter& painter) {
 						have = true;
 					}
 				}
-				if (0) {
+				if (have) {
 
 					double previous_x, previous_y;
 					bool first = true;
@@ -359,7 +360,10 @@ void Viewer::drawFunction(QPainter& painter) {
 				}
 			}		
 		}
-		painter.drawPixmap(875, 45 + i * 35, 35, 35, display);
+		if(!function_hide[i])
+			painter.drawPixmap(875, 45 + i * 35, 35, 35, display);
+		else
+			painter.drawPixmap(875, 45 + i * 35, 35, 35, hide);
 		painter.drawPixmap(915, 45 + i * 35, 35, 35, cancel);
 		QBrush brush(QColor(255, function_color[i], function_color_sec[i]));
 		pen.setColor(QColor(255, function_color[i], function_color_sec[i]));
