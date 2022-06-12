@@ -14,6 +14,7 @@ Viewer::Viewer(QWidget* parent) :QWidget(parent){
 	color = rand() % 256;
 	function_color_sec.push_back(color);
 
+	function_hide.push_back(false);
 	center_x = 0;
 	center_y = 0;
 	axis_x = 0;
@@ -23,6 +24,9 @@ Viewer::Viewer(QWidget* parent) :QWidget(parent){
 	axis_hasY = true;
 	now_function_amount = 1;
 	now_drawText = false;
+
+	display.load("Button1.png");
+	cancel.load("Button2.png");
 }
 void Viewer::drawInputText() {
 	for (int i = 0; i < now_function_amount; i++) {
@@ -30,6 +34,7 @@ void Viewer::drawInputText() {
 		text[i]->show();
 	}
 	QPushButton* test = new QPushButton(this);
+	test->setText("Add Function");
 	test->show();
 	test->setGeometry(700, 10, 175, 35);
 	connect(test, &QPushButton::clicked, [&] {
@@ -40,6 +45,7 @@ void Viewer::drawInputText() {
 		function_color.push_back(color);
 		color = rand() % 256;
 		function_color_sec.push_back(color);
+		function_hide.push_back(false);
 		now_function_amount++;
 		now_drawText = false;
 		update();
@@ -93,16 +99,70 @@ void Viewer::mouseMoveEvent(QMouseEvent* event) {
 void Viewer::mousePressEvent(QMouseEvent* event) {
 	mouse_x = event->x();
 	mouse_y = event->y();
-	if (event->x() >= 875 && event->x() <= 945) {
+	if (event->x() >= 915 && event->x() <= 945) {
 		int del = (event->y() - 45) / 35;
 		if (del < text.size() && del >= 0) {
+			string test = text[del]->text().toStdString();
+			stringstream str(test);
+			string var;
+			getline(str, var, '=');
+			if (var == "y") {
+				string value;
+				getline(str, value, '\n');
+				for (int k = 0; k < function.size(); k++) {
+					if (function[k] == value)
+						function.erase(function.begin() + k, function.begin() + k + 1);
+				}
+			}
 			text[del]->close();
 			text.erase(text.begin() + del, text.begin() + del + 1);
 			function_color.erase(function_color.begin() + del, function_color.begin() + del + 1);
 			function_color_sec.erase(function_color_sec.begin() + del, function_color_sec.begin() + del + 1);
+			function_hide.erase(function_hide.begin() + del, function_hide.begin() + del + 1);
 			now_drawText = false;
 			now_function_amount--;
 			update();
+		}
+	}
+	else if (event->x() >= 875 && event->x() <= 910) {
+		int hide = (event->y() - 45) / 35;
+		if (hide < text.size() && hide >= 0) {
+			function_hide[hide] = true;
+			update();
+		}
+	}
+}
+void Viewer::keyPressEvent(QKeyEvent* event) {
+	if (event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter) {
+		for (int i = 0; i < now_function_amount; i++) {
+			QString temp;
+			temp = text[i]->text();
+			string test;
+			test = temp.toStdString();
+
+			stringstream str(test);
+			string var;
+			getline(str, var, '=');
+			if (var == "y") {
+				string value;
+				getline(str, value, '\n');
+				function.push_back(value);
+			}
+			/*
+			要放進按下Enter的事件
+			if (var != "y" && var != "\0") {
+				bool check = false;
+				string value;
+				getline(str, value, '\n');
+				for (auto i : variable) {
+					if (i.first == var) {
+						check = true;
+						break;
+					}
+				}
+				if (!check)
+					variable.insert(pair<string,string>(var, value));//後面丟進函式
+			}*/
 		}
 	}
 }
@@ -258,13 +318,49 @@ void Viewer::drawFunction(QPainter& painter) {
 	QPen pen;
 	pen.setColor(QColor(0, 255, 0));
 	painter.setPen(pen);
-	//painter.drawRect(305, 305, 10, 10);
 	for (int i = 0; i < now_function_amount; i++) {
-		QString temp;
-		temp = text[i]->text();
-		string test;
-		test = temp.toStdString();
+		if (!function_hide[i]) {
+			QString temp;
+			temp = text[i]->text();
+			string test;
+			test = temp.toStdString();
+			stringstream str(test);
+			string var;
+			getline(str, var, '=');
+			if (var == "y") {
+				string value;
+				getline(str, value, '\n');
+				bool have = false;
+				for (auto& k : function) {
+					if (k == value) {
+						have = true;
+					}
+				}
+				if (0) {
 
+					double previous_x, previous_y;
+					bool first = true;
+					for (int i = 0; i < 600; i++) {
+						double x, y;
+						fun.setVariable("x", (double)i / (50 / range) + center_x - 300 / (50 / range));
+						string next = fun.replaceVariables(value);
+						y = stod(fun.calculate(next));
+						if (!first && ((center_y - y) * (50 / range) + 310) < 610 && ((center_y - y) * (50 / range) + 310) > 10)
+							painter.drawLine(i + 10, (center_y - y) * (50 / range) + 310, previous_x + 10, (center_y - previous_y) * (50 / range) + 310);
+						first = false;
+						if (i == 200) {
+							int test;
+							test = 0;
+						}
+
+						previous_x = i;
+						previous_y = y;
+					}
+				}
+			}		
+		}
+		painter.drawPixmap(875, 45 + i * 35, 35, 35, display);
+		painter.drawPixmap(915, 45 + i * 35, 35, 35, cancel);
 		QBrush brush(QColor(255, function_color[i], function_color_sec[i]));
 		pen.setColor(QColor(255, function_color[i], function_color_sec[i]));
 		painter.setPen(pen);
