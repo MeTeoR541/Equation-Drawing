@@ -19,6 +19,7 @@
 #include <QFileDialog>
 #include <cmath>
 #include "functions.h"
+#include "Variable.h"
 using namespace std;
 class Viewer :public QWidget {
 	Q_OBJECT
@@ -28,7 +29,8 @@ private:
 	vector<int>function_color;
 	vector<int>function_color_sec;
 	vector<bool>function_hide; //false顯示；true不顯示
-	map<string, string>variable; //x,y以外的變數
+	vector<bool>error;
+	vector<Variable>variable; //x,y以外的變數
 	int now_function_amount;
 	bool now_drawText;
 	double center_x;
@@ -63,4 +65,5 @@ public:
 	void drawAxis(QPainter& painter);
 	void changeCenter(double now_x, double now_y, double newrange);
 	void drawFunction(QPainter& painter);
+	bool variableCheck(string value);
 };

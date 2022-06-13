@@ -13,8 +13,8 @@ Viewer::Viewer(QWidget* parent) :QWidget(parent){
 	function_color.push_back(color);
 	color = rand() % 256;
 	function_color_sec.push_back(color);
-
 	function_hide.push_back(false);
+	error.push_back(false);
 	center_x = 0;
 	center_y = 0;
 	axis_x = 0;
@@ -47,6 +47,7 @@ void Viewer::drawInputText() {
 		color = rand() % 256;
 		function_color_sec.push_back(color);
 		function_hide.push_back(false);
+		error.push_back(false);
 		now_function_amount++;
 		now_drawText = false;
 		update();
@@ -120,6 +121,7 @@ void Viewer::mousePressEvent(QMouseEvent* event) {
 			function_color.erase(function_color.begin() + del, function_color.begin() + del + 1);
 			function_color_sec.erase(function_color_sec.begin() + del, function_color_sec.begin() + del + 1);
 			function_hide.erase(function_hide.begin() + del, function_hide.begin() + del + 1);
+			error.erase(error.begin() + del, error.begin() + del + 1);
 			now_drawText = false;
 			now_function_amount--;
 			update();
@@ -149,23 +151,62 @@ void Viewer::keyPressEvent(QKeyEvent* event) {
 				getline(str, value, '\n');
 				function.push_back(value);
 			}
-			/*
-			要放進按下Enter的事件
-			if (var != "y" && var != "\0") {
-				bool check = false;
-				string value;
-				getline(str, value, '\n');
-				for (auto i : variable) {
-					if (i.first == var) {
-						check = true;
-						break;
+			else if (var != "x" && var != "y" && var != "\0" && var.size() == 1) {
+				int test = var[0];
+				if (test >= 65 && test <= 90) {
+					string value;
+					getline(str, value, '\n');
+					bool check = false;
+					bool same = false;
+					for (int i = 0; i < variable.size(); i++) {
+						if (variable[i].getName() == var) {
+							if (variable[i].getValue() == value)
+								same = true;
+							check = true;
+							break;
+						}
 					}
+					if (!check && variableCheck(value))
+						variable.push_back(Variable(var, value));
+					else if (!true)
+						error[i] = true;
 				}
-				if (!check)
-					variable.insert(pair<string,string>(var, value));//後面丟進函式
-			}*/
+				else if (test >= 97 && test <= 122) {
+					string value;
+					getline(str, value, '\n');
+					bool check = false;
+					bool same = false;
+					for (int i = 0; i < variable.size(); i++) {
+						if (variable[i].getName() == var) {
+							if (variable[i].getValue() == value)
+								same = true;
+							check = true;
+							break;
+						}
+					}
+					if (!check && variableCheck(value))
+						variable.push_back(Variable(var, value));
+					else if (!true)
+						error[i] = true;
+				}
+			}
+			else if (var != "\0") {
+				error[i] = true;
+			}
 		}
 	}
+}
+bool Viewer::variableCheck(string value) {
+	Function test;
+	for (int i = 0; i < variable.size(); i++) {
+		test.setVariable(variable[i].getName(), 1);
+	}
+	if (test.replaceVariables(value) == "Error") {
+		return false;
+	}
+	else if (test.calculate(test.replaceVariables(value)) == "Error")
+		return false;
+	return true;
 }
 void Viewer::drawCoordinate(QPainter& painter) {
 	double test = center_x;
