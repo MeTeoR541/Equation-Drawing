@@ -117,6 +117,14 @@ void Viewer::mousePressEvent(QMouseEvent* event) {
 						function.erase(function.begin() + k, function.begin() + k + 1);
 				}
 			}
+			else if (var != "x" && var != "y" && var != "\0" && var.size() == 1) {
+				string value;
+				getline(str, value, '\n');
+				for (int k = 0; k < variable.size(); k++) {
+					if (variable[k].getName() == var && variable[k].getValue() == value)
+						variable.erase(variable.begin() + k, variable.begin() + k + 1);
+				}
+			}
 			text[del]->close();
 			text.erase(text.begin() + del, text.begin() + del + 1);
 			function_color.erase(function_color.begin() + del, function_color.begin() + del + 1);
@@ -150,7 +158,16 @@ void Viewer::keyPressEvent(QKeyEvent* event) {
 			if (var == "y") {
 				string value;
 				getline(str, value, '\n');
-				function.push_back(value);
+				bool same = false;
+				for (int i = 0; i < function.size(); i++) {
+					if (function[i] == value) {
+						same = true;
+						break;
+					}
+				}
+				if (!same) {
+					function.push_back(value);
+				}
 			}
 			else if (var != "x" && var != "y" && var != "\0" && var.size() == 1) {
 				int test = var[0];
