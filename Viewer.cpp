@@ -358,10 +358,10 @@ void Viewer::drawAxis(QPainter& painter) {
 }
 void Viewer::drawFunction(QPainter& painter) {
 	QPen pen;
-	pen.setColor(QColor(0, 255, 0));
-	painter.setPen(pen);
 	for (int i = 0; i < now_function_amount; i++) {
-		if (!function_hide[i]) {
+		if (!function_hide[i] && !error[i]) {
+			pen.setColor(QColor(255, function_color[i], function_color_sec[i]));
+			painter.setPen(pen);
 			QString temp;
 			temp = text[i]->text();
 			string test;
@@ -375,7 +375,7 @@ void Viewer::drawFunction(QPainter& painter) {
 				bool have = false;
 				for (auto& k : function) {
 					if (k == value) {
-						have = true;
+						have = true;//這裡要把value 丟進去測試有沒有問題
 					}
 				}
 				if (have) {
