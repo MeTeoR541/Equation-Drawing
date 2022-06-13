@@ -28,6 +28,7 @@ Viewer::Viewer(QWidget* parent) :QWidget(parent){
 	display.load("Button1.png");
 	hide.load("Button1-2.png");
 	cancel.load("Button2.png");
+	error_pix.load("error.png");
 }
 void Viewer::drawInputText() {
 	for (int i = 0; i < now_function_amount; i++) {
@@ -166,9 +167,11 @@ void Viewer::keyPressEvent(QKeyEvent* event) {
 							break;
 						}
 					}
-					if (!check && variableCheck(value))
+					if (!check && variableCheck(value)) {
 						variable.push_back(Variable(var, value));
-					else if (!true)
+						error[i] = false;
+					}
+					else if (!same)
 						error[i] = true;
 				}
 				else if (test >= 97 && test <= 122) {
@@ -184,9 +187,11 @@ void Viewer::keyPressEvent(QKeyEvent* event) {
 							break;
 						}
 					}
-					if (!check && variableCheck(value))
+					if (!check && variableCheck(value)) {
 						variable.push_back(Variable(var, value));
-					else if (!true)
+						error[i] = false;
+					}	
+					else if (!same)
 						error[i] = true;
 				}
 			}
@@ -194,6 +199,7 @@ void Viewer::keyPressEvent(QKeyEvent* event) {
 				error[i] = true;
 			}
 		}
+		update();
 	}
 }
 bool Viewer::variableCheck(string value) {
@@ -201,6 +207,7 @@ bool Viewer::variableCheck(string value) {
 	for (int i = 0; i < variable.size(); i++) {
 		test.setVariable(variable[i].getName(), 1);
 	}
+	test.setVariable("x", 1);
 	if (test.replaceVariables(value) == "Error") {
 		return false;
 	}
@@ -379,12 +386,17 @@ void Viewer::drawFunction(QPainter& painter) {
 					}
 				}
 				if (have) {
-
 					double previous_x, previous_y;
 					bool first = true;
+					Function fun;
 					for (int i = 0; i < 600; i++) {
 						double x, y;
+						Function fun;
 						fun.setVariable("x", (double)i / (50 / range) + center_x - 300 / (50 / range));
+						for (int i = 0; i < variable.size(); i++) {
+							string var_value = fun.replaceVariables(variable[i].getValue());
+							fun.setVariable(variable[i].getName(), stod(fun.calculate(var_value)));
+						}
 						string next = fun.replaceVariables(value);
 						y = stod(fun.calculate(next));
 						if (!first && ((center_y - y) * (50 / range) + 310) < 610 && ((center_y - y) * (50 / range) + 310) > 10)
@@ -411,6 +423,8 @@ void Viewer::drawFunction(QPainter& painter) {
 		painter.setPen(pen);
 		painter.setBrush(brush);
 		painter.drawRect(665, 45 + i * 35, 35, 35);
+		if (error[i])
+			painter.drawPixmap(665, 45 + i * 35, 35, 35, error_pix);
 	}
 
 	double previous_x, previous_y;

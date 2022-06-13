@@ -48,10 +48,10 @@ private:
 	double mouse_x;
 	double mouse_y;
 
-	Function fun;
 	QPixmap display;
 	QPixmap hide;
 	QPixmap cancel;
+	QPixmap error_pix;
 public:
 	Viewer(QWidget* parent = 0);
 	void paintEvent(QPaintEvent*);
