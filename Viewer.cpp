@@ -446,9 +446,9 @@ void Viewer::drawFunction(QPainter& painter) {
 							}
 							else if (!first && ((center_y - y) * (50 / range) + 310) < 610 && ((center_y - y) * (50 / range) + 310) > 10) {
 								if ((center_y - previous_y) * (50 / range) + 310 > 610)
-									painter.drawLine(k + 10, 610, previous_x + 10, (center_y - y) * (50 / range) + 310);
+									painter.drawLine(previous_x + 10, 610, k + 10, (center_y - y) * (50 / range) + 310);
 								else if ((center_y - previous_y) * (50 / range) + 310 < 10)
-									painter.drawLine(k + 10, 10, previous_x + 10, (center_y - y) * (50 / range) + 310);
+									painter.drawLine(previous_x + 10, 10, k + 10, (center_y - y) * (50 / range) + 310);
 							}
 							first = false;
 							previous_x = k;
