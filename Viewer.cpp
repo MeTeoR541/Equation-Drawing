@@ -167,6 +167,7 @@ void Viewer::keyPressEvent(QKeyEvent* event) {
 				}
 				if (!same) {
 					function.push_back(value);
+					error[i] = false;
 				}
 			}
 			else if (var != "x" && var != "y" && var != "\0" && var.size() == 1) {
@@ -399,33 +400,54 @@ void Viewer::drawFunction(QPainter& painter) {
 				bool have = false;
 				for (auto& k : function) {
 					if (k == value) {
-						have = true;//這裡要把value 丟進去測試有沒有問題
+						Function fun_test;
+						fun_test.setVariable("x", 1);
+						for (int j = 0; j < variable.size(); j++) {
+							string var_value = fun_test.replaceVariables(variable[j].getValue());
+							fun_test.setVariable(variable[j].getName(),1);
+						}
+						string test_first = fun_test.replaceVariables(value);
+						if (test_first != "Error") {
+							string test_second = fun_test.calculate(test_first);
+							if (test_second != "Error") {
+								error[i] = false;
+								have = true;
+							}
+							else
+								error[i] = true;
+						}
+						else
+							error[i] = true;
 					}
 				}
 				if (have) {
 					double previous_x, previous_y;
 					bool first = true;
 					Function fun;
-					for (int i = 0; i < 600; i++) {
+					for (int k = 0; k < 600; k++) {
 						double x, y;
 						Function fun;
-						fun.setVariable("x", (double)i / (50 / range) + center_x - 300 / (50 / range));
-						for (int i = 0; i < variable.size(); i++) {
-							string var_value = fun.replaceVariables(variable[i].getValue());
-							fun.setVariable(variable[i].getName(), stod(fun.calculate(var_value)));
+						fun.setVariable("x", (double)k / (50 / range) + center_x - 300 / (50 / range));
+						for (int j = 0; j < variable.size(); j++) {
+							string var_value = fun.replaceVariables(variable[j].getValue());
+							fun.setVariable(variable[j].getName(), stod(fun.calculate(var_value)));
 						}
 						string next = fun.replaceVariables(value);
-						y = stod(fun.calculate(next));
-						if (!first && ((center_y - y) * (50 / range) + 310) < 610 && ((center_y - y) * (50 / range) + 310) > 10)
-							painter.drawLine(i + 10, (center_y - y) * (50 / range) + 310, previous_x + 10, (center_y - previous_y) * (50 / range) + 310);
-						first = false;
-						if (i == 200) {
-							int test;
-							test = 0;
+						try {
+							y = stod(fun.calculate(next));
+							//if (((center_y - y) * (50 / range) + 310) < 610 && ((center_y - y) * (50 / range) + 310) > 10)
+								//painter.drawRect(k + 10, (center_y - y) * (50 / range) + 310, 1, 1);
+							if (!first && ((center_y - y) * (50 / range) + 310) < 610 && ((center_y - y) * (50 / range) + 310) > 10)
+								//if(((center_y - previous_y) * (50 / range) + 310) < 610 && ((center_y - previous_y) * (50 / range) + 310) > 10)
+								painter.drawLine(k + 10, (center_y - y) * (50 / range) + 310, previous_x + 10, (center_y - previous_y) * (50 / range) + 310);
+							first = false;
+							previous_x = k;
+							previous_y = y;
 						}
-
-						previous_x = i;
-						previous_y = y;
+						catch(int x){
+							first = true;
+							continue;
+						}
 					}
 				}
 			}		
@@ -442,22 +464,5 @@ void Viewer::drawFunction(QPainter& painter) {
 		painter.drawRect(665, 45 + i * 35, 35, 35);
 		if (error[i])
 			painter.drawPixmap(665, 45 + i * 35, 35, 35, error_pix);
-	}
-
-	double previous_x, previous_y;
-	bool first = true;
-	for (int i = 0; i < 600; i++) {
-		double x, y;
-		y = sin((double)i / (50 / range) + center_x - 300 / (50 / range));
-		if (!first && ((center_y - y) * (50 / range) + 310) < 610 && ((center_y - y) * (50 / range) + 310) > 10)
-			painter.drawLine(i + 10, (center_y - y) * (50 / range) + 310, previous_x + 10, (center_y - previous_y) * (50 / range) + 310);
-		first = false;
-		if (i == 200) {
-			int test;
-			test = 0;
-		}
-
-		previous_x = i;
-		previous_y = y;
 	}
 }
