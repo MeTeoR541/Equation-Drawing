@@ -435,11 +435,21 @@ void Viewer::drawFunction(QPainter& painter) {
 						string next = fun.replaceVariables(value);
 						try {
 							y = stod(fun.calculate(next));
-							//if (((center_y - y) * (50 / range) + 310) < 610 && ((center_y - y) * (50 / range) + 310) > 10)
-								//painter.drawRect(k + 10, (center_y - y) * (50 / range) + 310, 1, 1);
-							if (!first && ((center_y - y) * (50 / range) + 310) < 610 && ((center_y - y) * (50 / range) + 310) > 10)
-								//if(((center_y - previous_y) * (50 / range) + 310) < 610 && ((center_y - previous_y) * (50 / range) + 310) > 10)
-								painter.drawLine(k + 10, (center_y - y) * (50 / range) + 310, previous_x + 10, (center_y - previous_y) * (50 / range) + 310);
+							if (!first && ((center_y - previous_y) * (50 / range) + 310) < 610 && ((center_y - previous_y) * (50 / range) + 310) > 10)
+							{
+								if ((center_y - y) * (50 / range) + 310 > 610)
+									painter.drawLine(k + 10, 610, previous_x + 10, (center_y - previous_y) * (50 / range) + 310);
+								else if ((center_y - y) * (50 / range) + 310 < 10)
+									painter.drawLine(k + 10, 10, previous_x + 10, (center_y - previous_y) * (50 / range) + 310);
+								else
+									painter.drawLine(k + 10, (center_y - y) * (50 / range) + 310, previous_x + 10, (center_y - previous_y) * (50 / range) + 310);
+							}
+							else if (!first && ((center_y - y) * (50 / range) + 310) < 610 && ((center_y - y) * (50 / range) + 310) > 10) {
+								if ((center_y - previous_y) * (50 / range) + 310 > 610)
+									painter.drawLine(k + 10, 610, previous_x + 10, (center_y - y) * (50 / range) + 310);
+								else if ((center_y - previous_y) * (50 / range) + 310 < 10)
+									painter.drawLine(k + 10, 10, previous_x + 10, (center_y - y) * (50 / range) + 310);
+							}
 							first = false;
 							previous_x = k;
 							previous_y = y;
