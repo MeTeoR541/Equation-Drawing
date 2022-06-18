@@ -16,8 +16,8 @@ string Function::TANGENT = "tan";
 
 string Function::calculate(string input)
 { 
-    //|| !checkSintaxis(input)
-    if (!checkParenthesis(input))
+    //
+    if (!checkParenthesis(input)|| !checkSintaxis(input))
         return "Error";
 
     vector<char> p_stack;
@@ -313,14 +313,24 @@ string Function::solvePower(string input)
 
         int cut_start = temp1.size();
         string fact1_s, fact2_s;
-
+            
+        int add = 0;
         for (int i = temp1.size() - 1; i >= 0; i--)
         {
             if (isOperator(temp1[i])) {
                 if (temp1[i] == MINUS) {
                     fact1_s = temp1[i] + fact1_s;
                     cut_start--;
+                    if (i > 0 && temp1[i - 1] == ' ') {
+                        add = 1;
+                        cut_start--;
+                    }
                 }
+                break;
+            }
+            else if (temp1[i] == ' ') {
+                add = 1;
+                cut_start--;
                 break;
             }
             else
@@ -344,7 +354,7 @@ string Function::solvePower(string input)
                 fact2_s += temp2[i];
         }
 
-        int cut_size = fact1_s.size() + fact2_s.size() + 1;
+        int cut_size = fact1_s.size() + fact2_s.size() + 1 + add;
 
         double res = pow(stod(fact1_s), stod(fact2_s));
 
@@ -440,7 +450,7 @@ string Function::replaceVariables(string input)
                 // Replace the variable with it's value
             {
                 // First, check if it is sin, cos or tan
-                if (word == kwords[0] || word == kwords[1] || word == kwords[1])
+                if (word == kwords[0] || word == kwords[1] || word == kwords[2])
                 {
                     word = "";
                 }
@@ -539,6 +549,8 @@ bool Function::checkParenthesis(string input)
         {
             if (p_stack.size() == 0 || next)
                 return false;
+            else if (i < input.size() - 1 && isDigit(input[i + 1]))
+                return false;
             else
                 p_stack.pop_back();
         }
@@ -559,30 +571,54 @@ bool Function::checkSintaxis(string input)
     {
         char c = input[i];
 
-        if (i == input.size() - 1)
+        // Check first digit
+        if (i == 0)
+        {
+            if (isOperator(c) && c != MINUS)
+                return false;
+            if (c == CLOSE_PAR)
+                return false;
+        }
+        // Check last digit
+        else if (i == input.size() - 1)
         {
             if (isOperator(c) && c != FACT)
                 return false;
-        }
-        else if (c == PLUS || c == MINUS)
-        {
-            if (!isDigit(input[i + 1]))
+            if (c == OPEN_PAR)
                 return false;
         }
-        else if (c == MULT || c == DIV || c == '.')
+        else
         {
-            if (!isDigit(input[i - 1]) || !isDigit(input[i + 1]))
-                return false;
-        }
-        else if (c == FACT)
-        {
-            if (!isDigit(input[i - 1]) || !isOperator(input[i + 1]))
-                return false;
+            char n = input[i + 1];
+            char p = input[i - 1];
+
+            if (c == PLUS || c == MINUS)
+            {
+                if (n == FACT || n == DIV || n == MULT || n == EXPO)
+                    return false;
+            }
+
+            if (c == MULT || c == DIV || c == '.')
+            {
+                if (isOperator(p) && p != FACT)
+                    return false;
+                if (isOperator(n) && n != MINUS)
+                    return false;
+            }
+
+            if (c == FACT)
+            {
+                if (!isDigit(p))
+                    return false;
+                if (isOperator(p) && p != FACT)
+                    return false;
+            }
         }
     }
 
     return true;
 }
+
 
 bool Function::isDecimal(string input)
 // Returns true if the input contains decimal places
